@@ -10,9 +10,25 @@ jobs:
           name: Run tests
           command: npm test
 
+  deploy:
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run:
+          name: Deploy to cloud.gov
+          command: ./scripts/deploy.sh
+
 workflows:
   version: 2
 
   test:
     jobs:
       - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
